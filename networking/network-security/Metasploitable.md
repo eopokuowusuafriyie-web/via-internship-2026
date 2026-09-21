@@ -48,6 +48,21 @@ Key open ports found:
 
 ---
 
-## Exploit 2:
+## Exploit 2: Telnet Weak/Default Credentials
 
-(to be added)
+- **Service / Port:** Telnet / 23
+- **Vulnerability:** Weak/default credentials (msfadmin:msfadmin) with no protection against plaintext credential exposure
+- **Tool Used:** telnet (manual, no Metasploit)
+- **Why This Tool:** Telnet itself is the vulnerable service — the issue isn't a code exploit but weak authentication, so a plain telnet client is the correct and most direct tool to demonstrate the weakness, rather than a scripted exploit module.
+- **Steps:**
+  1. `telnet 192.168.1.3`
+  2. Login: `msfadmin`
+  3. Password: `msfadmin`
+  4. `whoami` / `id` to confirm access
+- **Evidence:** evidence/exploit2.png
+- **Cyber Kill Chain Stage(s):** Reconnaissance, Delivery, Exploitation, Actions on Objectives
+  - Reconnaissance: nmap identified telnet open on port 23.
+  - Delivery: connecting via `telnet` sent the login attempt to the target.
+  - Exploitation: the weak credentials succeeded, granting an authenticated shell.
+  - Actions on Objectives: ran commands (`whoami`, `id`) inside the shell to confirm and use access.
+- **Outcome / Impact:** Obtained an authenticated shell as user `msfadmin` on the target via plaintext telnet.
