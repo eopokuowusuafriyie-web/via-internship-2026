@@ -10,27 +10,36 @@
 
 ## Reconnaissance Summary
 
-Ran an nmap service/version scan against the target:
+Ran an nmap scan against the target:
 
-`nmap -sV -sC 192.168.1.3`
+`nmap 192.168.1.3`
 
 Key open ports found:
-- 21/tcp - vsftpd 2.3.4 (anonymous FTP login allowed)
-- 22/tcp - OpenSSH 4.7p1 Debian 8ubuntu1
-- 23/tcp - Linux telnetd
-- 25/tcp - Postfix smtpd
-- 53/tcp - ISC BIND 9.4.2
-- 80/tcp - Apache httpd 2.2.8 (Ubuntu) DAV/2
+- 21/tcp - ftp
+- 22/tcp - ssh
+- 23/tcp - telnet
+- 25/tcp - smtp
+- 53/tcp - domain
+- 80/tcp - http
 - 111/tcp - rpcbind
-- 139/tcp, 445/tcp - Samba smbd 3.X - 4.X
-- 1099/tcp - Java RMI (GNU Classpath grmiregistry)
-- 1524/tcp - ingreslock (Metasploitable root shell backdoor)
+- 139/tcp - netbios-ssn
+- 445/tcp - microsoft-ds
+- 512/tcp - exec
+- 513/tcp - login
+- 514/tcp - shell
+- 1099/tcp - rmiregistry
+- 1524/tcp - ingreslock
 - 2049/tcp - nfs
-- 3306/tcp - MySQL 5.0.51a-3ubuntu5
-- 5432/tcp - PostgreSQL 8.3.0-8.3.7
-- 5900/tcp - VNC (protocol 3.3)
-- 8180/tcp - Apache Tomcat/Coyote JSP engine 1.1
+- 2121/tcp - ccproxy-ftp
+- 3306/tcp - mysql
+- 5432/tcp - postgresql
+- 5900/tcp - vnc
+- 6000/tcp - X11
+- 6667/tcp - irc
+- 8009/tcp - ajp13
+- 8180/tcp - unknown
 
+**Evidence:** evidence/recon.png
 ---
 
 ## Exploit 1: vsftpd 2.3.4 Backdoor
