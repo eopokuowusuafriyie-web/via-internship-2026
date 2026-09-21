@@ -126,6 +126,25 @@ Key open ports found:
 - **Cyber Kill Chain Stage(s):** Reconnaissance, Delivery, Exploitation, Actions on Objectives
   - Reconnaissance: nmap identified MySQL open on port 3306.
   - Delivery: the mysql client connection sent the login attempt to the target.
+
+ ## Exploit 6: PostgreSQL Default Credentials
+
+- **Service / Port:** PostgreSQL / 5432
+- **Vulnerability:** PostgreSQL superuser account (postgres) configured with default/weak password
+- **Tool Used:** psql (manual, no Metasploit)
+- **Why This Tool:** The vulnerability is weak default credentials, not a code flaw — the native psql client is the correct and most direct way to demonstrate unauthenticated-equivalent access, rather than a scripted exploit module.
+- **Steps:**
+  1. `nmap -p 5432 -sV 192.168.1.3` — confirmed PostgreSQL 8.3.0-8.3.7
+  2. `psql -h 192.168.1.3 -U postgres`
+  3. Entered password: `postgres`
+  4. `SELECT version();` to confirm access
+- **Evidence:** evidence/exploit6.png
+- **Cyber Kill Chain Stage(s):** Reconnaissance, Delivery, Exploitation, Actions on Objectives
+  - Reconnaissance: nmap identified PostgreSQL open on port 5432.
+  - Delivery: the psql client connection sent the login attempt to the target.
+  - Exploitation: the default password allowed successful authentication as the superuser.
+  - Actions on Objectives: ran `SELECT version();` to confirm and demonstrate the level of access gained.
+- **Outcome / Impact:** Obtained superuser-level access to the target's PostgreSQL server using default credentials.
   - Exploitation: the blank root password allowed authentication with no credentials.
   - Actions on Objectives: ran `show databases;` to enumerate accessible data.
 - **Outcome / Impact:** Obtained unauthenticated root-level access to the target's MySQL server, exposing all databases.
