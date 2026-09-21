@@ -66,3 +66,23 @@ Key open ports found:
   - Exploitation: the weak credentials succeeded, granting an authenticated shell.
   - Actions on Objectives: ran commands (`whoami`, `id`) inside the shell to confirm and use access.
 - **Outcome / Impact:** Obtained an authenticated shell as user `msfadmin` on the target via plaintext telnet.
+
+
+  ## Exploit 3: NFS Misconfigured Export
+
+- **Service / Port:** NFS / 2049 (via rpcbind / 111)
+- **Vulnerability:** NFS share exported with no access restriction (`/ *`), allowing any host to mount the target's entire root filesystem
+- **Tool Used:** showmount + mount (manual, no Metasploit)
+- **Why This Tool:** The vulnerability is a misconfiguration, not a code flaw — native NFS client tools (`showmount`, `mount`) are the correct way to demonstrate that the export has no restriction, rather than a scripted exploit module.
+- **Steps:**
+  1. `showmount -e 192.168.1.3` — confirmed `/` exported with `*` (no restriction)
+  2. `mkdir /tmp/nfs_mount`
+  3. `sudo mount -t nfs 192.168.1.3:/ /tmp/nfs_mount`
+  4. `ls -la /tmp/nfs_mount` — confirmed full root filesystem browsable
+- **Evidence:** evidence/exploit3.png
+- **Cyber Kill Chain Stage(s):** Reconnaissance, Delivery, Exploitation, Actions on Objectives
+  - Reconnaissance: nmap identified NFS/rpcbind open on ports 111/2049.
+  - Delivery: `showmount` and `mount` commands connected to the target's NFS service.
+  - Exploitation: the misconfigured export allowed mounting without authentication.
+  - Actions on Objectives: browsed the target's root filesystem, demonstrating full read access to system files.
+- **Outcome / Impact:** Gained unauthenticated read access to the target's entire filesystem via NFS. (Optional further step: files could be read directly, e.g. `cat /tmp/nfs_mount/etc/passwd`.)
