@@ -1,4 +1,4 @@
-<img width="640" height="438" alt="exploit9" src="https://github.com/user-attachments/assets/cb3611c5-584d-48b1-ac14-625ffbf87bca" /># Metasploitable2 Exploitation Report
+ Metasploitable2 Exploitation Report
 
 **Name:** Emmanuel Gregory Opoku Owusu-Afriyie
 **Index Number:** 4195524
