@@ -12,6 +12,8 @@
 
 Ran an nmap service/version scan against the target:
 
+`nmap -sV -sC 192.168.1.3`
+
 Key open ports found:
 - 21/tcp - vsftpd 2.3.4 (anonymous FTP login allowed)
 - 22/tcp - OpenSSH 4.7p1 Debian 8ubuntu1
@@ -20,7 +22,14 @@ Key open ports found:
 - 53/tcp - ISC BIND 9.4.2
 - 80/tcp - Apache httpd 2.2.8 (Ubuntu) DAV/2
 - 111/tcp - rpcbind
+- 139/tcp, 445/tcp - Samba smbd 3.X - 4.X
+- 1099/tcp - Java RMI (GNU Classpath grmiregistry)
+- 1524/tcp - ingreslock (Metasploitable root shell backdoor)
 - 2049/tcp - nfs
+- 3306/tcp - MySQL 5.0.51a-3ubuntu5
+- 5432/tcp - PostgreSQL 8.3.0-8.3.7
+- 5900/tcp - VNC (protocol 3.3)
+- 8180/tcp - Apache Tomcat/Coyote JSP engine 1.1
 
 ---
 
