@@ -218,3 +218,48 @@ Key open ports found:
 - **Outcome / Impact:** Obtained a root-level Meterpreter session on the target via insecure Java RMI registry configuration.
 
 
+## Exploit 10: VNC Weak Password Authentication
+
+- **Service / Port:** VNC / 5900
+- **Vulnerability:** VNC server configured with a weak, easily guessable password ("password"), allowing unauthorized remote desktop access
+- **Tool Used:** Metasploit — auxiliary/scanner/vnc/vnc_login, followed by vncviewer
+- **Why This Tool:** This is a credential-brute-force scenario — Metasploit's VNC login scanner automates testing common/weak passwords against the service efficiently, which is the correct approach for identifying weak authentication. The vncviewer client was then used to actually connect and confirm the access visually.
+- **Steps:**
+  1. `nmap -p 5900 -sV 192.168.1.3` — confirmed VNC protocol 3.3
+  2. `msfconsole` → `use auxiliary/scanner/vnc/vnc_login`
+  3. `set RHOSTS 192.168.1.3`
+  4. `run` — confirmed login successful with password "password"
+  5. `vncviewer 192.168.1.3` — connected using the discovered password; authentication succeeded and the session identified the desktop as "root's X desktop (metasploitable:0)"
+- **Evidence:** evidence/exploit10.png — shows a successful VNC connection with "Authentication successful" and the desktop name "root's X desktop (metasploitable:0)", confirming both the working weak credential and root-level desktop access
+- **Cyber Kill Chain Stage(s):** Reconnaissance, Weaponization, Delivery, Exploitation, Actions on Objectives
+  - Reconnaissance: nmap identified VNC open on port 5900.
+  - Weaponization: selecting the vnc_login scanner and configuring RHOSTS prepared the credential attack.
+  - Delivery/Exploitation: running the scan sent the login attempts, and the weak password succeeded; connecting via vncviewer delivered and completed the authenticated session.
+  - Actions on Objectives: gained remote desktop access to the target, confirmed as the root user's desktop session.
+- **Outcome / Impact:** Obtained unauthorized remote desktop (GUI) access to the target's root account via weak VNC password authentication.
+
+
+ ## Kill Chain Coverage Summary
+
+| Exploit | Recon | Weaponization | Delivery | Exploitation | Installation | C2 | Actions on Objectives |
+|---|---|---|---|---|---|---|---|
+| 1. vsftpd 2.3.4 Backdoor | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
+| 2. Telnet Weak/Default Credentials | ✔ | | ✔ | ✔ | | | ✔ |
+| 3. NFS Misconfigured Export | ✔ | | ✔ | ✔ | | | ✔ |
+| 4. Samba usermap_script Command Injection | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
+| 5. MySQL Root Account with No Password | ✔ | | ✔ | ✔ | | | ✔ |
+| 6. PostgreSQL Default Credentials | ✔ | | ✔ | ✔ | | | ✔ |
+| 7. Tomcat Manager Default Credentials (WAR Upload) | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
+| 8. Ingreslock Backdoor Root Shell | ✔ | | ✔ | | | | ✔ |
+| 9. Java RMI Insecure Default Configuration | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
+| 10. VNC Weak Password Authentication | ✔ | ✔ | ✔ | ✔ | | | ✔ |
+
+---
+
+## Lessons Learned / Mitigations
+
+1. **vsftpd 2.3.4 Backdoor:** Never run software downloaded from unverified/compromised sources; verify package checksums/signatures, and keep FTP daemons patched to current stable releases.
+2. **Weak/Default Credentials (Telnet, MySQL, PostgreSQL, Tomcat, VNC):** Enforce strong, unique passwords on all services; disable default accounts or change default credentials immediately after installation; disable plaintext protocols like Telnet in favor of SSH.
+3. **NFS Misconfigured Export:** Restrict NFS exports to specific trusted IP ranges instead of using a wildcard (`*`), and apply the principle of least privilege to exported paths.
+4. **Samba usermap_script Injection:** Upgrade to a patched Samba version, disable the vulnerable username map script feature if not required, and validate/sanitize all user-supplied input at the protocol level.
+5. **Java RMI Insecure Default Config:** Disable remote class loading on RMI registries, or restrict RMI service access to trusted internal networks only via firewall rules. 
