@@ -39,7 +39,7 @@ Key open ports found:
 - 8009/tcp - ajp13
 - 8180/tcp - unknown
 
-**Evidence:** evidence/recon.png
+**Evidence:** evidence/0-recon.png
 ---
 
 ## Exploit 1: vsftpd 2.3.4 Backdoor
