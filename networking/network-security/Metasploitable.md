@@ -176,4 +176,21 @@ Key open ports found:
   - Actions on Objectives: ran `getuid`/`sysinfo`, confirming access as the `tomcat55` service account and gathering system details.
 - **Outcome / Impact:** Obtained a Meterpreter session on the target running as the `tomcat55` service account, via authenticated malicious WAR deployment through Tomcat Manager.
 
+  ## Exploit 8: Ingreslock Backdoor Root Shell
+
+- **Service / Port:** ingreslock / 1524
+- **Vulnerability:** Unauthenticated root shell backdoor left open on port 1524 (a legacy artifact commonly planted on this VM to simulate a prior compromise)
+- **Tool Used:** netcat (manual, no Metasploit)
+- **Why This Tool:** No exploitation is actually required here — the vulnerability is a pre-existing open root shell with zero authentication. A raw netcat connection is the correct and simplest tool to demonstrate this, since no payload or code execution needs to be triggered.
+- **Steps:**
+  1. `nmap -p 1524 -sV 192.168.1.3` — nmap identified the service directly as "Metasploitable root shell"
+  2. `nc 192.168.1.3 1524`
+  3. `whoami` / `id` to confirm access
+- **Evidence:** evidence/exploit8.png
+- **Cyber Kill Chain Stage(s):** Reconnaissance, Delivery, Actions on Objectives
+  - Reconnaissance: nmap identified the open backdoor shell on port 1524.
+  - Delivery: connecting via netcat delivered the connection directly into the waiting shell.
+  - Actions on Objectives: ran `whoami`/`id`, confirming immediate root access with no exploitation step required.
+- **Outcome / Impact:** Obtained instant, unauthenticated root shell access on the target via a pre-existing backdoor.
+
   
