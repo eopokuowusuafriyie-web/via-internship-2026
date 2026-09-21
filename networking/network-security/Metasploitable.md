@@ -1,7 +1,7 @@
 # Metasploitable2 Exploitation Report
 
-**Name:** <Emmanuel Gregory Opoku Owusu-Afriyie>
-**Index Number:** <4195524>
+**Name:** Emmanuel Gregory Opoku Owusu-Afriyie
+**Index Number:** 4195524
 **Date:** 2026-09-21
 **Target IP:** 192.168.1.3
 **Attacker OS / Tools:** Kali Linux, Metasploit Framework, nmap
