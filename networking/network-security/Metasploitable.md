@@ -111,4 +111,23 @@ Key open ports found:
   - Actions on Objectives: ran `whoami`/`id`, confirming root-level access on the target.
 - **Outcome / Impact:** Obtained a root-level (uid=0, gid=0) remote command shell on the target via SMB command injection.
 
-  
+  ## Exploit 5: MySQL Root Account with No Password
+
+- **Service / Port:** MySQL / 3306
+- **Vulnerability:** MySQL root account configured with no password, allowing unauthenticated remote login
+- **Tool Used:** mysql client (manual, no Metasploit)
+- **Why This Tool:** The vulnerability is a weak/blank credential configuration, not a code flaw — the native mysql CLI client is the correct and most direct way to demonstrate unauthenticated access, rather than a scripted exploit module.
+- **Steps:**
+  1. `nmap -p 3306 -sV 192.168.1.3` — confirmed MySQL 5.0.51a-3ubuntu5
+  2. `mysql -h 192.168.1.3 -u root --skip-ssl`
+  3. Logged in successfully with no password prompt
+  4. `show databases;` to confirm access
+- **Evidence:** evidence/exploit5.png
+- **Cyber Kill Chain Stage(s):** Reconnaissance, Delivery, Exploitation, Actions on Objectives
+  - Reconnaissance: nmap identified MySQL open on port 3306.
+  - Delivery: the mysql client connection sent the login attempt to the target.
+  - Exploitation: the blank root password allowed authentication with no credentials.
+  - Actions on Objectives: ran `show databases;` to enumerate accessible data.
+- **Outcome / Impact:** Obtained unauthenticated root-level access to the target's MySQL server, exposing all databases.
+
+ 
